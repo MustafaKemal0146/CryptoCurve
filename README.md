@@ -60,7 +60,7 @@ pip install -r requirements.txt
 
 Uygulamayı çalıştırmak için:
 ```bash
-python3 3.py
+python3 main.py
 ```
 
 ### Menü Seçenekleri
