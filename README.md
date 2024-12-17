@@ -34,7 +34,7 @@ Bu uygulama, basit bir eliptik eğri kripto sistemini simüle eden, kullanıcı 
 
 1. Depoyu klonlayın:
 ```bash
-git clone https://github.com/kullanici_adi/crypto-app.git
+git clone https://github.com/MustafaKemal0146/CryptoCurve
 cd crypto-app
 ```
 
