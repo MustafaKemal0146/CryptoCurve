@@ -79,4 +79,4 @@ Hata bildirimleri ve geliştirme önerileri için issue açabilirsiniz.
 
 ## 📜 Lisans
 
-[Lisans Bilgisi Eklenecek]
+GPL-3.0 license
