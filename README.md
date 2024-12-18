@@ -4,6 +4,10 @@
 
 Bu uygulama, basit bir eliptik eğri kripto sistemini simüle eden, kullanıcı dostu bir Python programıdır. Kullanıcılara mesaj şifreleme ve şifre çözme imkanı sağlar.
 
+## 👌 Not:
+Projedeki kodlama hakkında detaylı bilgiyi gösterebilmek için detay.txt adında bir dosya hazıladım. Bu dosyada her satırdaki kodun hangi amaçla yazıldığı detaylı açıklanmaktadır.
+
+
 ## ✨ Özellikler
 
 - Eliptik eğri algoritması kullanan şifreleme
