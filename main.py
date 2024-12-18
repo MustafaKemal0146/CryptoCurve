@@ -3,6 +3,8 @@ import time
 from ecdsa import SECP256k1, SigningKey
 import string
 import subprocess
+import unidecode
+from termcolor import colored
 
 def clear_screen():
     # Farklı işletim sistemleri için ekran temizleme
@@ -12,12 +14,12 @@ def print_banner():
     try:
         # Figlet ile başlık oluşturma
         banner = subprocess.check_output(['figlet', 'CryptoCurve'], universal_newlines=True)
-        print(banner)
-        print("=" * 50)
+        print(colored(banner, 'green'))
+        print(colored("=" * 50, 'green'))
         time.sleep(1)
     except:
         # Eğer figlet kurulu değilse basit bir başlık
-        print("===== CryptoCurve =====")
+        print(colored("===== CryptoCurve =====", 'green'))
 
 # 1. Anahtar üretimi
 def generate_keys():
@@ -27,6 +29,8 @@ def generate_keys():
 
 # 2. Her harf için benzersiz bir sayı
 def letter_to_number(letter):
+    # Türkçe karakterleri ASCII'ye çevir
+    letter = unidecode.unidecode(letter.upper())
     return string.ascii_uppercase.index(letter)  # A=0, B=1, C=2, ...
 
 def number_to_letter(number):
@@ -38,7 +42,10 @@ def encrypt_message(message, public_key):
     # Anahtarın x koordinatını al
     key_value = int.from_bytes(public_key.to_string(), byteorder='big')
     
-    for letter in message.upper():
+    # Türkçe karakterleri ASCII'ye çevir
+    message = unidecode.unidecode(message.upper())
+    
+    for letter in message:
         if letter.isalpha():
             num = letter_to_number(letter)
             encrypted_num = (num + key_value) % 26  # Eliptik eğri üzerindeişlem
@@ -65,11 +72,11 @@ def main_menu():
     while True:
         clear_screen()
         print_banner()
-        print("\n--- Ana Menü ---")
-        print("1. Şifreleme Yap")
-        print("2. Şifre Çözme Yap")
-        print("3. Çıkış")
-        choice = input("Yapmak istediğiniz işlemi seçin (1/2/3): ")
+        print(colored("\n--- Ana Menü ---", 'green'))
+        print(colored("1. Şifreleme Yap", 'green'))
+        print(colored("2. Şifre Çözme Yap", 'green'))
+        print(colored("3. Çıkış", 'green'))
+        choice = input(colored("Yapmak istediğiniz işlemi seçin (1/2/3): ", 'green'))
 
         if choice == '1':
             # Anahtarları oluştur
@@ -77,12 +84,12 @@ def main_menu():
 
             # Mesaj al
             original_message = input("Şifrelenecek mesajı girin: ")
-            print("Orijinal Mesaj:", original_message)
+            print(colored("Orijinal Mesaj:", 'green'), original_message)
 
             # Şifreleme
             encrypted_message = encrypt_message(original_message, public_key)
-            print("Şifreli Mesaj:", encrypted_message)
-            print("Şifreleme Anahtarı:", int.from_bytes(public_key.to_string(), byteorder='big'))
+            print(colored("Şifreli Mesaj:", 'green'), encrypted_message)
+            print(colored("Şifreleme Anahtarı:", 'green'), int.from_bytes(public_key.to_string(), byteorder='big'))
 
         elif choice == '2':
             # Şifreli mesaj al
@@ -92,25 +99,25 @@ def main_menu():
             try:
                 encryption_key = int(input("Şifreleme anahtarını girin: "))
             except ValueError:
-                print("Geçersiz anahtar. Lütfen sayısal bir değer girin.")
+                print(colored("Geçersiz anahtar. Lütfen sayısal bir değer girin.", 'red'))
                 time.sleep(2)
                 continue
 
             # Şifreyi çözme
             decrypted_message = decrypt_message(encrypted_message, encryption_key)
-            print("Çözülmüş Mesaj:", decrypted_message)
+            print(colored("Çözülmüş Mesaj:", 'green'), decrypted_message)
 
         elif choice == '3':
-            print("Programdan çıkılıyor...")
+            print(colored("Programdan çıkılıyor...", 'green'))
             break  # Çıkış yap
 
         else:
-            print("Geçersiz seçim. Lütfen tekrar deneyin.")
+            print(colored("Geçersiz seçim. Lütfen tekrar deneyin.", 'red'))
             time.sleep(2)
             continue
 
         # Ana menüye dönmek istiyor musunuz?
-        input("\nDevam etmek için Enter'a basın...")
+        input(colored("\nDevam etmek için Enter'a basın...", 'green'))
         
 # Programı başlat
 if __name__ == "__main__":
