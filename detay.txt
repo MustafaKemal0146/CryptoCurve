@@ -1,0 +1,176 @@
+# Gerekli kütüphanelerin import edilmesi
+
+# os: İşletim sistemi ile ilgili işlemler yapmamıza olanak sağlayan kütüphane
+# Ekran temizleme, dosya işlemleri gibi sistem seviyesi görevler için kullanılır
+import os
+
+# time: Zamanlama ve gecikme işlemleri için kullanılan kütüphane
+# Programda bekleme süreleri ve zamanlama işlemleri için kullanacağız
+import time
+
+# ecdsa: Eliptik Eğri Dijital İmza Algoritması (Elliptic Curve Digital Signature Algorithm)
+# Güvenli anahtar üretimi ve şifreleme için kullanılan kriptografik kütüphane
+# SECP256k1: Bitcoin'in de kullandığı bir eliptik eğri standartı
+from ecdsa import SECP256k1, SigningKey
+
+# string: Alfabe ve karakter işlemleri için standart kütüphane
+# Harf-sayı dönüşümleri için kullanacağız
+import string
+
+# subprocess: Sistem komutlarını çalıştırmak için kullanılan kütüphane
+# Figlet gibi harici araçları çağırmak için kullanılacak
+import subprocess
+
+# unidecode: Türkçe ve diğer unicode karakterleri ASCII'ye çeviren kütüphane
+# Türkçe karakter problemlerini çözmek için kullanılacak
+import unidecode
+
+# termcolor: Terminal çıktılarını renklendirmek için kullanılan kütüphane
+# Menü ve banner'ları renkli göstermek için kullanılacak
+from termcolor import colored
+
+# Ekran temizleme fonksiyonu
+# Farklı işletim sistemlerinde (Windows/Linux/macOS) ekranı temizler
+def clear_screen():
+    # os.name: İşletim sistemi türünü belirler
+    # Windows için 'cls', diğer sistemler için 'clear' komutu
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+# Banner (başlık) yazdırma fonksiyonu
+def print_banner():
+    try:
+        # subprocess kullanarak figlet ile renkli banner oluşturma
+        # figlet: ASCII sanat yazıları oluşturan bir komut satırı aracı
+        banner = subprocess.check_output(['figlet', 'CryptoCurve'], universal_newlines=True)
+        # Başlığı yeşil renkle yazdırma
+        print(colored(banner, 'green'))
+        print(colored("=" * 50, 'green'))
+        # 1 saniye bekletme
+        time.sleep(1)
+    except:
+        # Figlet yoksa basit bir başlık göster
+        print(colored("===== CryptoCurve =====", 'green'))
+
+# Anahtar üretim fonksiyonu
+# Eliptik eğri kullanarak güvenli özel ve halka açık anahtar üretir
+def generate_keys():
+    # SigningKey: Özel anahtarı oluşturur
+    # SECP256k1: Bitcoin'in kullandığı standart eliptik eğri
+    sk = SigningKey.generate(curve=SECP256k1)  # Özel anahtar
+    vk = sk.get_verifying_key()  # Halka açık anahtar
+    return sk, vk
+
+# Harf-sayı dönüşüm fonksiyonları
+# Harfleri sayılara, sayıları harflere çevirir
+def letter_to_number(letter):
+    # unidecode: Türkçe karakterleri İngilizce alfabeye çevirir
+    letter = unidecode.unidecode(letter.upper())
+    # string.ascii_uppercase: A-Z harflerini içerir
+    # index metodu ile harflerin sıra numarasını bulur
+    return string.ascii_uppercase.index(letter)  # A=0, B=1, C=2, ...
+
+def number_to_letter(number):
+    # Sayıyı 26'ya bölerek her zaman geçerli bir harf indeksi elde eder
+    return string.ascii_uppercase[number % 26]
+
+# Mesaj şifreleme fonksiyonu
+def encrypt_message(message, public_key):
+    encrypted_message = []
+    # Public key'in byte değerini tam sayıya çevirme
+    key_value = int.from_bytes(public_key.to_string(), byteorder='big')
+    
+    # Türkçe karakterleri düzeltme
+    message = unidecode.unidecode(message.upper())
+    
+    for letter in message:
+        if letter.isalpha():
+            # Her harfi sayıya çevirip şifreleme anahtarı ile karıştırma
+            num = letter_to_number(letter)
+            encrypted_num = (num + key_value) % 26
+            encrypted_message.append(number_to_letter(encrypted_num))
+        else:
+            # Boşluk ve özel karakterler olduğu gibi kalır
+            encrypted_message.append(letter)
+    return ''.join(encrypted_message)
+
+# Şifresi çözme fonksiyonu
+def decrypt_message(encrypted_message, encryption_key):
+    decrypted_message = []
+    
+    for letter in encrypted_message.upper():
+        if letter.isalpha():
+            # Şifrelenmiş harfi çözme
+            encrypted_num = letter_to_number(letter)
+            decrypted_num = (encrypted_num - encryption_key) % 26
+            decrypted_message.append(number_to_letter(decrypted_num))
+        else:
+            # Boşluk ve özel karakterler olduğu gibi kalır
+            decrypted_message.append(letter)
+    return ''.join(decrypted_message)
+
+# Ana menü fonksiyonu
+def main_menu():
+    while True:
+        # Ekranı temizle ve banner'ı göster
+        clear_screen()
+        print_banner()
+        
+        # Menü seçeneklerini renkli olarak göster
+        print(colored("\n--- Ana Menü ---", 'green'))
+        print(colored("1. Şifreleme Yap", 'green'))
+        print(colored("2. Şifre Çözme Yap", 'green'))
+        print(colored("3. Çıkış", 'green'))
+        
+        # Kullanıcıdan seçim al
+        choice = input(colored("Yapmak istediğiniz işlemi seçin (1/2/3): ", 'green'))
+
+        # Seçime göre işlem yap
+        if choice == '1':
+            # Anahtar oluştur
+            private_key, public_key = generate_keys()
+
+            # Mesaj al
+            original_message = input("Şifrelenecek mesajı girin: ")
+            print(colored("Orijinal Mesaj:", 'green'), original_message)
+
+            # Şifreleme
+            encrypted_message = encrypt_message(original_message, public_key)
+            print(colored("Şifreli Mesaj:", 'green'), encrypted_message)
+            print(colored("Şifreleme Anahtarı:", 'green'), 
+                  int.from_bytes(public_key.to_string(), byteorder='big'))
+
+        elif choice == '2':
+            # Şifreli mesaj al
+            encrypted_message = input("Çözülecek şifreli mesajı girin: ")
+            
+            # Şifreleme anahtarını al
+            try:
+                encryption_key = int(input("Şifreleme anahtarını girin: "))
+            except ValueError:
+                print(colored("Geçersiz anahtar. Lütfen sayısal bir değer girin.", 'red'))
+                time.sleep(2)
+                continue
+
+            # Şifreyi çözme
+            decrypted_message = decrypt_message(encrypted_message, encryption_key)
+            print(colored("Çözülmüş Mesaj:", 'green'), decrypted_message)
+
+        elif choice == '3':
+            print(colored("Programdan çıkılıyor...", 'green'))
+            break  # Çıkış yap
+
+        else:
+            print(colored("Geçersiz seçim. Lütfen tekrar deneyin.", 'red'))
+            time.sleep(2)
+            continue
+
+        # Ana menüye dönmek için enter bekle
+        input(colored("\nDevam etmek için Enter'a basın...", 'green'))
+        
+# Programın ana giriş noktası
+if __name__ == "__main__":
+    # Ekranı temizle ve banner'ı göster
+    clear_screen()
+    print_banner()
+    # Ana menüyü başlat
+    main_menu()
