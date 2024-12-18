@@ -1,0 +1,4 @@
+# CryptoCurve - Update Notes:
+
+## 18.12.2024
+Şifreleme gerçekleştirilirken Türkçe karakter algılama sorunu giderildi. Hem Türkçe Hem İngilizce bir şekilde Metinleri Şifreleyebilirsiniz.
