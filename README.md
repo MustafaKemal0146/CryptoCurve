@@ -85,5 +85,5 @@ Hata bildirimleri ve geliştirme önerileri için issue açabilirsiniz.
 
 GPL-3.0 license
 
-## 🌐 Repo Akktiviteleri
+## 🌐 Repo Aktiviteleri
 ![Alt](https://repobeats.axiom.co/api/embed/67075111087fcb52dfcefb7882e2f2ea67ddb052.svg "Repobeats analytics image")
