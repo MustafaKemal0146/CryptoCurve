@@ -1,5 +1,5 @@
 # CryptoCurve - Basit Eliptik Eğri Şifreleme Uygulaması
-
+[![Hits](https://hits.sh/github.com/MustafaKemal0146/CryptoCurve.svg?style=for-the-badge&color=0089e9)](https://hits.sh/github.com/MustafaKemal0146/CryptoCurve/)
 ## 🔒 Proje Açıklaması
 
 Bu uygulama, basit bir eliptik eğri kripto sistemini simüle eden, kullanıcı dostu bir Python programıdır. Kullanıcılara mesaj şifreleme ve şifre çözme imkanı sağlar.
